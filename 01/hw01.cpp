@@ -1,45 +1,23 @@
 #include <iostream>
-#include <stdio.h>
-#include <chrono>
 #include <malloc.h>
 #include <math.h>
 #include "numbers.dat"
 
 using namespace std;
 
-int prime(int x)
-{
-    int sq = sqrt(x);
-    for(int i = 2; i <= sq; ++i)
-    {
-        if(x % i == 0)
-            return 0;
-    }
-    return 1;
-}
-
 void fill_Sieve(int* sieve)
 {
-    sieve[0] = 0;
-    sieve[1] = 1;
-    int max = Data[Size - 1];
-    int j = 0;//ind for Data array
-    for(int i = 1; i < max; ++i)
+    sieve[0] = 1;
+    int sq = sqrt(Size);
+    for(int i = 2; i < sq; ++i)
     {
-        while((i + 1) > Data[j])
-            j++;
-        if(Data[j] > (i + 1))
-            sieve[i] = -1;
-        else
+        if(!sieve[i - 1])
         {
-            sieve[i] = prime(i + 1);
-            j++;
-            if (sieve[i])
+            int i1 = 2 * i - 1;
+            while(i1 < Size)
             {
-                while (Data[j] == (i + 1))
-                {
-                    j++; sieve[i]++;
-                }
+                sieve[i1] = 1;//0 = prime
+                i1 += i;      //1 = not prime
             }
         }
     }
@@ -48,14 +26,29 @@ void fill_Sieve(int* sieve)
 
 int get_answ(int x, int y, int*& sieve)
 {
-    if(sieve[x - 1] == -1 || sieve[y - 1] == -1)
-        return 0;
-    int count = 0;
-    for(int i = x - 1; i < y; ++i)
+    int left = 0, right = Size, count = 0, med;
+    while(Data[left] < x)
     {
-        if(sieve[i] != -1)
-            count += sieve[i];
+        med = (left + right) / 2;
+        if(Data[med] <= x)
+            left = med;
+        else
+            right = med;
     }
+    while(Data[left] >= x)
+        left--;
+    left++;
+    if(Data[left] != x)
+        return 0;
+
+    while(Data[left] <= y)
+    {
+        if(!sieve[Data[left] - 1])
+            count++;
+        left++;
+    }
+    if(Data[left - 1] != y)
+        return 0;
     return count;
 }
 
@@ -66,7 +59,6 @@ int main(int argc, char* argv[])
 
     int *sieve = new int[Size]{0};
     fill_Sieve(sieve);
-
     for (int i = 1; i < argc; i += 2)
     {
         int x = atoi(argv[i]);
