@@ -27,7 +27,7 @@ int get_answ(int x, int y)
         i++;
     if(Data[i] != x)
         return -1;
-    while(Data[i] <= y)
+    while(i < Size && Data[i] <= y)
     {
         bool pr = prime(Data[i]);
         if(pr)
