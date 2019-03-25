@@ -9,10 +9,10 @@ using namespace std;
 class Calculator
 {
     string expression;
+    int  cur_ind;
 
 public:
     int  result;
-    int  cur_ind;
     Calculator(const string &input)
         :result(0),
          cur_ind(0)
@@ -28,10 +28,10 @@ private:
             throw invalid_argument("error");
             return 0;
         }
-        string n;
-        while(isdigit(expression[cur_ind]))
-            n += expression[cur_ind++];
-        return atoi(n.c_str());
+        char *end;
+        int n = std::strtol(expression.c_str() + cur_ind, &end, 10);
+        cur_ind = end - expression.c_str();
+        return n;
     }
 
     void sum_and_sub()
@@ -107,11 +107,10 @@ int main(int argc, char *argv[])
         cout << "error";
         return 1;
     }
-    const string s = string(argv[1]);
 
     try
     {
-        Calculator a(s);
+        Calculator a = Calculator(string(argv[1]));
         cout << a.result;
     }
     catch (invalid_argument&)
