@@ -25,11 +25,15 @@ public:
         return arr[x];
     }
 
-    int& operator [](int x) const
+    const int& operator [](int x) const
     {
         if(x >= len)
             throw out_of_range("");
         return arr[x];
+    }
+    ~Column()
+    {
+        delete[] arr;
     }
 };
 
@@ -96,7 +100,7 @@ public:
         return mat[x];
     }
 
-    Column& operator [](int x) const
+    const Column& operator [](int x) const
     {
         if(x >= rows)
             throw out_of_range("");
