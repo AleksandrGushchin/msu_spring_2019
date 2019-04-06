@@ -109,10 +109,6 @@ public:
     }
     ~Matrix()
     {
-        for (int i = 0; i < rows; i++)
-        {
-            mat[i].~Column();
-        }
         delete[] (mat);
     }
 };
