@@ -31,7 +31,7 @@ public:
     }
 
     template <typename... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT&&... args)
     {
         return process(forward<ArgsT>(args)...);
     }
@@ -42,9 +42,7 @@ private:
 
     Error process(uint64_t x)
     {
-        string st = to_string(x);
-        st += " ";
-        out_ << st;
+        out_ << x << Separator;
         return Error::NoError;
     }
 
@@ -59,15 +57,15 @@ private:
     }
 
     template <typename T>
-    Error process(int x)
+    Error process(T x)
     {
         return Error::CorruptedArchive;
     }
 
     template <typename T, typename... ArgsT>
-    Error process(T &&x, ArgsT&&... args)
+    Error process(T &&x, ArgsT &&... args)
     {
-        if (process(x) == Error::CorruptedArchive)
+        if (process(forward<T&&>(x)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         else
             return process(forward<ArgsT>(args)...);
@@ -123,11 +121,10 @@ private:
             x = tmp;
             return Error::NoError;
         }
-        catch (...)
+        catch (invalid_argument)
         {
             return Error::CorruptedArchive;
         }
-        return Error::NoError;
     }
 
     template <typename T>
@@ -137,9 +134,9 @@ private:
     }
 
     template <typename T, typename... ArgsT>
-    Error process(T &&x, ArgsT&&... args)
+    Error process(T &&x, ArgsT &&... args)
     {
-        if (process(x) == Error::CorruptedArchive)
+        if (process(forward<T&&>(x)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         else
             return process(forward<ArgsT>(args)...);
