@@ -136,7 +136,7 @@ private:
     template <typename T, typename... ArgsT>
     Error process(T &&x, ArgsT &&... args)
     {
-        if (process(forward<T&&>(x)) == Error::CorruptedArchive)
+        if (process(forward<T>(x)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         else
             return process(forward<ArgsT>(args)...);
