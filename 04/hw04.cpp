@@ -40,13 +40,13 @@ private:
     // process использует variadic templates
     ostream &out_;
 
-    Error process(uint64_t &x)
+    Error process(uint64_t x)
     {
         out_ << x << Separator;
         return Error::NoError;
     }
 
-    Error process(bool &x)
+    Error process(bool x)
     {
         if (x)
             out_ << "true";
@@ -65,7 +65,7 @@ private:
     template <typename T, typename... ArgsT>
     Error process(T &&x, ArgsT &&... args)
     {
-        if (process(x) == Error::CorruptedArchive)
+        if (process(forward<T>(x)) == Error::CorruptedArchive)
             return Error::CorruptedArchive;
         else
             return process(forward<ArgsT>(args)...);
