@@ -1,11 +1,11 @@
 #include <thread>
 #include <iostream>
 #include <atomic>
-#define MAX_NUM 500000
 
 using namespace std;
 
 atomic<int> count;
+const int MAX_NUM = 500000;
 
 void threadFunction1()
 {
