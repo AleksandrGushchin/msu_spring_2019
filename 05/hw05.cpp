@@ -4,8 +4,8 @@
 
 using namespace std;
 
-atomic<int> count;
-atomic<int> MAX_NUM;
+const int MAX_NUM = 500000;
+int count = 0;
 
 void threadFunction1()
 {
@@ -37,8 +37,6 @@ void threadFunction2()
 
 int main()
 {
-    MAX_NUM = 500000;
-    count = 0;
     thread t1(threadFunction1);
     thread t2(threadFunction2);
 
