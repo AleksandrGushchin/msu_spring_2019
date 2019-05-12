@@ -11,7 +11,7 @@ void threadFunction1()
 {
     while (count <= MAX_NUM)
     {
-        if (count & 1)
+        if (count & 1 && count <= MAX_NUM)
         {
             cout << "pong" << endl;
             count++;
@@ -25,7 +25,7 @@ void threadFunction2()
 {
     while (count <= MAX_NUM)
     {
-        if (!(count & 1))
+        if (!(count & 1) && count <= MAX_NUM)
         {
             cout << "ping" << endl;
             count++;
