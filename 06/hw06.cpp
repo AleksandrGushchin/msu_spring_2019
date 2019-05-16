@@ -7,16 +7,13 @@
 using namespace std;
 using intl = uint64_t;
 using FILE_pointer = unique_ptr<FILE,void (*)(FILE*)>;
-void destructor(FILE*p)
-    { fclose(p); }
-    
-    
+
 const int amount = 1 << 18;
-char *temp_file = "temp_file.bin";
-char *input_file = "input.bin";
-char *name_output = "output.bin";
-char *output_first_file = "outputtmp1.bin";
-char *output_second_file = "outputtmp2.bin";
+const char *temp_file = "temp_file.bin";
+const char *input_file = "input.bin";
+const char *name_output = "output.bin";
+const char *output_first_file = "outputtmp1.bin";
+const char *output_second_file = "outputtmp2.bin";
 
 // сортировка начального файла по кускам по 2^18 чисел
 int first_sort()
@@ -34,6 +31,8 @@ int first_sort()
         fwrite(data.get(), sizeof(intl), read_numbers, output.get());
     }
     while (read_numbers == amount);
+    fclose(input);
+    fclose(output);
     return i;
 }
 
@@ -119,6 +118,9 @@ void merge_files(const int beg, const int size_of_chunk, const char *name_output
             fwrite(first_inp.get(), sizeof(intl), amount, output);
         }
     }
+    fclose(first_inp);
+    fclose(second_inp);
+    fclose(merge);
     return;
 }
 
@@ -145,6 +147,9 @@ void merge_in_one(bool flag)
         how_read = fread(buf.get(), sizeof(intl), amount, output2.get());
         fwrite(buf.get(), sizeof(intl), how_read, output.get());
     }
+    fclose(output1);
+    fclose(output2);
+    fclose(output);
     return;
 }
 
@@ -168,6 +173,8 @@ int main()
         }
         size <<= 1;
         merge_in_one(!(n & 1));
+        flose(output1);
+        fclose(output2);
     }
     return 0;
 }
