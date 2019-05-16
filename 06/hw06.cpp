@@ -6,6 +6,7 @@
 
 using namespace std;
 using intl = uint64_t;
+using FILE_pointer = unique_ptr<FILE>;
 
 const int amount = 1 << 18;
 const char *temp_file = "temp_file.bin";
@@ -18,8 +19,8 @@ const char *output_second_file = "outputtmp2.bin";
 int first_sort()
 {
     unique_ptr<intl[]> data(new intl [amount]);
-    FILE  input  (fopen(input_file, "rb"));
-    FILE  output (fopen(temp_file, "wb") );
+    FILE_pointer  input  (fopen(input_file, "rb"));
+    FILE_pointer  output  (fopen(temp_file, "wb"));
 
     int read_numbers = 0, i = 0;
     do
@@ -30,16 +31,14 @@ int first_sort()
         fwrite(data.get(), sizeof(intl), read_numbers, output.get());
     }
     while (read_numbers == amount);
-    fclose(input);
-    fclose(output);
     return i;
 }
 
 // сортировка слиянием 2 файлов, вывод в свой файл для каждого потока
 void merge_files(const int beg, const int size_of_chunk, const char *name_output, FILE* const output)
 {
-    FILE  input1 (fopen(name_output, "rb"));
-    FILE  input2 (fopen(name_output, "rb"));
+    FILE_pointer  input1 (fopen(name_output, "rb"));
+    FILE_pointer  input2 (fopen(name_output, "rb"));
 
     unique_ptr<intl []> first_inp  (new intl [amount]);
     unique_ptr<intl []> second_inp (new intl [amount]);
@@ -117,9 +116,6 @@ void merge_files(const int beg, const int size_of_chunk, const char *name_output
             fwrite(first_inp.get(), sizeof(intl), amount, output);
         }
     }
-    fclose(first_inp);
-    fclose(second_inp);
-    fclose(merge);
     return;
 }
 
@@ -130,9 +126,10 @@ void merge_in_one(bool flag)
     if (!flag)
         swap(name1, name2);
 
-    FILE  output1 (fopen(name1, "rb");
-    FILE  output2 (fopen(name2, "rb");
-    FILE  output (fopen(name_output, "wb");
+    FILE_pointer  output1 (fopen(name1, "rb"));
+    FILE_pointer  output2 (fopen(name2, "rb"));
+    FILE_pointer  output (fopen(name_output, "wb"));
+
     unique_ptr<intl []> buf (new intl [amount]);
     int how_read = 1;
     while (how_read)
@@ -146,9 +143,6 @@ void merge_in_one(bool flag)
         how_read = fread(buf.get(), sizeof(intl), amount, output2.get());
         fwrite(buf.get(), sizeof(intl), how_read, output.get());
     }
-    fclose(output1);
-    fclose(output2);
-    fclose(output);
     return;
 }
 
@@ -160,8 +154,8 @@ int main()
     n /= 2;
     for (int j = 0; j < i; j++)
     {
-        FILE  output1 (fopen(output_first_file, "wb");
-        FILE  output2 (fopen(output_second_file, "wb");
+        FILE_pointer  output1 (fopen(output_first_file, "wb"));
+        FILE_pointer  output2 (fopen(output_second_file, "wb"));
 
         for (int k = 1; k <= n; k += 2)
         {
@@ -172,8 +166,6 @@ int main()
         }
         size <<= 1;
         merge_in_one(!(n & 1));
-        flose(output1);
-        fclose(output2);
     }
     return 0;
 }
