@@ -6,7 +6,6 @@
 
 using namespace std;
 using intl = uint64_t;
-using FILE_pointer = unique_ptr<FILE,void (*)(FILE*)>;
 
 const int amount = 1 << 18;
 const char *temp_file = "temp_file.bin";
@@ -19,8 +18,8 @@ const char *output_second_file = "outputtmp2.bin";
 int first_sort()
 {
     unique_ptr<intl[]> data(new intl [amount]);
-    FILE_pointer  input  (fopen(input_file, "rb"),  destructor);
-    FILE_pointer  output (fopen(temp_file, "wb"),   destructor);
+    FILE  input  (fopen(input_file, "rb"));
+    FILE  output (fopen(temp_file, "wb") );
 
     int read_numbers = 0, i = 0;
     do
@@ -39,8 +38,8 @@ int first_sort()
 // сортировка слиянием 2 файлов, вывод в свой файл для каждого потока
 void merge_files(const int beg, const int size_of_chunk, const char *name_output, FILE* const output)
 {
-    FILE_pointer  input1 (fopen(name_output, "rb"), destructor);
-    FILE_pointer  input2 (fopen(name_output, "rb"), destructor);
+    FILE  input1 (fopen(name_output, "rb"));
+    FILE  input2 (fopen(name_output, "rb"));
 
     unique_ptr<intl []> first_inp  (new intl [amount]);
     unique_ptr<intl []> second_inp (new intl [amount]);
@@ -131,9 +130,9 @@ void merge_in_one(bool flag)
     if (!flag)
         swap(name1, name2);
 
-    FILE_pointer  output1 (fopen(name1, "rb"),      destructor);
-    FILE_pointer  output2 (fopen(name2, "rb"),      destructor);
-    FILE_pointer  output (fopen(name_output, "wb"), destructor);
+    FILE  output1 (fopen(name1, "rb");
+    FILE  output2 (fopen(name2, "rb");
+    FILE  output (fopen(name_output, "wb");
     unique_ptr<intl []> buf (new intl [amount]);
     int how_read = 1;
     while (how_read)
@@ -161,8 +160,8 @@ int main()
     n /= 2;
     for (int j = 0; j < i; j++)
     {
-        FILE_pointer  output1 (fopen(output_first_file, "wb"),destructor);
-        FILE_pointer  output2 (fopen(output_second_file, "wb"),destructor);
+        FILE  output1 (fopen(output_first_file, "wb");
+        FILE  output2 (fopen(output_second_file, "wb");
 
         for (int k = 1; k <= n; k += 2)
         {
