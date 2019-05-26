@@ -6,8 +6,7 @@
 
 using namespace std;
 using intl = uint64_t;
-using FILE_pointer = unique_ptr<FILE>;
-
+using FILE_pointer = unique_ptr<FILE, int(*)(FILE*)>;
 const int amount = 1 << 18;
 const char *temp_file = "temp_file.bin";
 const char *input_file = "input.bin";
@@ -19,8 +18,8 @@ const char *output_second_file = "outputtmp2.bin";
 int first_sort()
 {
     unique_ptr<intl[]> data(new intl [amount]);
-    FILE_pointer  input  (fopen(input_file, "rb"));
-    FILE_pointer  output  (fopen(temp_file, "wb"));
+    FILE_pointer  input  (fopen(input_file, "rb"), fclose);
+    FILE_pointer  output  (fopen(temp_file, "wb"), fclose);
 
     int read_numbers = 0, i = 0;
     do
@@ -37,8 +36,8 @@ int first_sort()
 // сортировка слиянием 2 файлов, вывод в свой файл для каждого потока
 void merge_files(const int beg, const int size_of_chunk, const char *name_output, FILE* const output)
 {
-    FILE_pointer  input1 (fopen(name_output, "rb"));
-    FILE_pointer  input2 (fopen(name_output, "rb"));
+    FILE_pointer  input1 (fopen(name_output, "rb"),fclose);
+    FILE_pointer  input2 (fopen(name_output, "rb"), fclose);
 
     unique_ptr<intl []> first_inp  (new intl [amount]);
     unique_ptr<intl []> second_inp (new intl [amount]);
@@ -126,9 +125,9 @@ void merge_in_one(bool flag)
     if (!flag)
         swap(name1, name2);
 
-    FILE_pointer  output1 (fopen(name1, "rb"));
-    FILE_pointer  output2 (fopen(name2, "rb"));
-    FILE_pointer  output (fopen(name_output, "wb"));
+    FILE_pointer  output1 (fopen(name1, "rb"),fclose);
+    FILE_pointer  output2 (fopen(name2, "rb"),fclose);
+    FILE_pointer  output (fopen(name_output, "wb"),fclose);
 
     unique_ptr<intl []> buf (new intl [amount]);
     int how_read = 1;
@@ -154,8 +153,8 @@ int main()
     n /= 2;
     for (int j = 0; j < i; j++)
     {
-        FILE_pointer  output1 (fopen(output_first_file, "wb"));
-        FILE_pointer  output2 (fopen(output_second_file, "wb"));
+        FILE_pointer  output1 (fopen(output_first_file, "wb"), fclose);
+        FILE_pointer  output2 (fopen(output_second_file, "wb"), fclose);
 
         for (int k = 1; k <= n; k += 2)
         {
